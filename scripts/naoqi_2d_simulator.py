@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+import argparse
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.animation as animation
@@ -15,14 +16,14 @@ DT = 0.01
 Kp = 3.5
 
 class Naoqi2DSimulator:
-    def __init__(self):
+    def __init__(self, ip, port):
         self.r = 0.2
         self.vel = np.array([0,0,0])
 
         self.fig = plt.figure()
         self.ax = plt.axes()
 
-        self.server = SocketServer("127.0.0.1", 50007)
+        self.server = SocketServer(ip, port)
         self.server_thread = threading.Thread(target=self.server.update, name="server_thread")
         self.server_thread.start()
 
@@ -91,5 +92,12 @@ class Naoqi2DSimulator:
             plt.pause(DT)
 
 if __name__ == '__main__':
-    sim = Naoqi2DSimulator()
+    parser = argparse.ArgumentParser(description='2d simulator for naoqi service.')
+
+    parser.add_argument('--ip', help='server ip address', default='127.0.0.1')
+    parser.add_argument('--port', help='server port number', type=int, default=9559)
+
+    args = parser.parse_args()
+
+    sim = Naoqi2DSimulator(args.ip, args.port)
     sim.run()
