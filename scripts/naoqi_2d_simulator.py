@@ -20,6 +20,9 @@ class Naoqi2DSimulator:
         self.r = 0.2
         self.vel = np.array([0,0,0])
 
+        self.robot_pos_x_list = []
+        self.robot_pos_y_list = []
+
         self.fig = plt.figure()
         self.ax = plt.axes()
 
@@ -39,6 +42,7 @@ class Naoqi2DSimulator:
         x, y, theta = pose
 
         self.draw_coordinate(pose)
+        self.draw_trajectory(pose)
 
         xn = x + self.r * math.cos(theta)
         yn = y + self.r * math.sin(theta)
@@ -59,6 +63,14 @@ class Naoqi2DSimulator:
         self.ax.quiver(x, y, uy, vy, angles='xy',
                        scale_units='xy', alpha=0.3, width=0.003, scale=1)
         self.ax.annotate("y", xy=(x + uy, y + vy))
+
+    def draw_trajectory(self, robot_pos):
+        x, y, _ = robot_pos
+        self.robot_pos_x_list.append(x)
+        self.robot_pos_y_list.append(y)
+        self.ax.scatter(self.robot_pos_x_list,
+                        self.robot_pos_y_list, s=1, color="blue", label="trajectory")
+        self.ax.legend()
         
     def set_velocity(self, vel):
         self.vel = vel
